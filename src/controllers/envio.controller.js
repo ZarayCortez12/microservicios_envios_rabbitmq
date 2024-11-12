@@ -108,7 +108,9 @@ export const registerEnvioWelcome = async (
           nombres: nombres,
         },
       });
-      console.log("Mensaje enviado a RabbitMQ para enviar correo de envio de paquete de bienvenida");
+      console.log(
+        "Mensaje enviado a RabbitMQ para enviar correo de envio de paquete de bienvenida"
+      );
     } catch (rabbitError) {
       console.error("Error al enviar mensaje a RabbitMQ:", rabbitError);
     }
@@ -117,5 +119,21 @@ export const registerEnvioWelcome = async (
   } catch (error) {
     console.error("Error al registrar el envío:", error);
     throw new Error("Error al registrar el envío");
+  }
+};
+
+export const getEnvioUser = async (req, res) => {
+ const { identificacion } = req.params; // O req.query o req.body según cómo envíes el dato
+ console.log("req.params", req.params);   
+ console.log("identificacion", identificacion);
+ try {
+    const envio = await Envio.find({ id_user: identificacion });
+    if (!envio || envio.length === 0) {
+      return res.status(404).json({ message: "No se encontró el envío" });
+    }
+    res.json(envio);
+  } catch (error) {
+    console.error("Error al obtener el envío:", error);
+    res.status(500).json({ message: "Error al obtener el envío" });
   }
 };
